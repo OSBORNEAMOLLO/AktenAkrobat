@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::collections::HashSet;
-use std::io::Write;
 
 use crate::PatientRecord;
 use csv::{ReaderBuilder, WriterBuilder};

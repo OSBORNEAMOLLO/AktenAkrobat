@@ -56,7 +56,4 @@ jobs:
             *.tar.gz
             *.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.COMMR }}
-
-          // Project that is compiled for the Linux Platform (x86_64, arm64)//
-          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}     
