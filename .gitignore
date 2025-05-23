@@ -1,0 +1,4 @@
+# Ignore Cargo registry and target build files
+/target
+**/.cargo/
+**/.rustup/

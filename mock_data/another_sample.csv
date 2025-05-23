@@ -1,0 +1,5 @@
+patient_id,date,heart_rate,bp_systolic,bp_diastolic,temperature,blood_sugar,steps
+106,2025-04-23,88,125,85,37.2,5.8,3000
+101,2025-04-20,78,120,80,36.6,5.2,4300
+107,2025-04-24,95,130,90,37.0,6.5,7000
+
