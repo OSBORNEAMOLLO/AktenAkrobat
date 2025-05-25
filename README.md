@@ -1,5 +1,10 @@
-AktenAkrobat
+## 📦 Build Status
+
+![Build](https://github.com/OSBORNEAMOLLO/AktenAkrobat/actions/workflows/main.yml/badge.svg)
+
 # 🧠 MedIntegrator – Health Data CLI Toolkit
+![Build](https://github.com/OSBORNEAMOLLO/AktenAkrobat/actions/workflows/main.yml/badge.svg)
+
 
 **MedIntegrator** is a lightweight, Rust-powered command-line application for healthcare data management. It helps you **load, validate, merge, summarize, predict risks**, and export patient records — with special attention to **AI readiness** and **secure local use**.
 
@@ -87,10 +92,3 @@ These binaries **do not require any dependencies** on the host OS.
 ---
 
 ## 🎯 Innovation Highlight
-
-MedIntegrator is built with **real-world clinical challenges** in mind. It’s designed for **small teams, researchers, or startups** who need:
-
-- Local, secure, and automated handling of sensitive data  
-- A stepping stone toward more **intelligent health systems** using ML  
-- Lightweight tooling that works in **offline, constrained environments**
-
