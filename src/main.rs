@@ -2,6 +2,7 @@ mod validate;
 mod summarize;
 mod merge;
 mod export;
+mod risk;
 
 use std::fs::File;
 use clap::{Parser, Subcommand};
@@ -9,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use csv::ReaderBuilder;
 use serde_json;
 
-/// A CLI tool for loading, validating, merging, exporting, and summarizing patient health data.
+/// A CLI tool for loading, validating, merging, exporting, predicting, and summarizing patient health data.
 #[derive(Parser)]
 #[command(name = "AktenAkrobat")]
 #[command(about = "A CLI tool for health data integration and analysis (CSV + JSON)", long_about = None)]
@@ -44,12 +45,18 @@ enum Commands {
     /// Export merged data as CSV or JSON
     Export {
         #[arg(short, long)]
-        format: String, // e.g., "csv" or "json"
+        format: String,
         #[arg(short, long)]
         output: String,
     },
 
-    /// Predict risk (AI placeholder)
+    /// Export data formatted for AI use
+    ExportAi {
+        #[arg(short, long)]
+        output: String,
+    },
+
+    /// Predict risk (simple rule-based logic)
     PredictRisk {},
 }
 
@@ -124,9 +131,29 @@ fn main() {
             export::export_data(&records, format, output);
         }
 
+        Commands::ExportAi { output } => {
+            let path = "mock_data/merged_output.csv";
+            let file = File::open(path).expect("Failed to open source file");
+            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
+            let mut records = Vec::new();
+            for result in rdr.deserialize() {
+                let record: PatientRecord = result.expect("CSV deserialize failed");
+                records.push(record);
+            }
+            export::export_ai_data(&records, output);
+        }
+
         Commands::PredictRisk {} => {
-            println!("🤖 Predicting risk (placeholder)...");
-            // Future AI support will be implemented here.
+            let path = "mock_data/merged_output.csv";
+            let file = File::open(path).expect("Failed to open source file");
+            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
+            let mut records = Vec::new();
+            for result in rdr.deserialize() {
+                let record: PatientRecord = result.expect("CSV deserialize failed");
+                records.push(record);
+            }
+            println!("🤖 Predicting risk (basic rules)...");
+            risk::predict_risks(&records);
         }
     }
 }
