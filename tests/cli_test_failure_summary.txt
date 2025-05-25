@@ -1,0 +1,20 @@
+
+Test Failures Summary:
+------------------------
+❌ test_export_csv
+❌ test_predict_risk_command_runs
+❌ test_predict_risk_json_exports_file
+
+All these tests failed due to:
+ - `assertion failed: output.status.success()`
+Which means the subprocess command in those tests exited with a non-zero code.
+Likely Causes:
+ - CLI subcommand not recognized
+ - Required files are missing (e.g., mock_data/merged_output.csv)
+ - The tested command does not produce expected output
+ - Wrong flags or file paths in the test
+
+Suggested Fixes:
+ - Ensure all required data files are present and accessible
+ - Print the actual output (`stdout` and `stderr`) from the command to debug
+ - Rerun the failed command manually to observe error details

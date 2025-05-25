@@ -56,8 +56,14 @@ enum Commands {
         output: String,
     },
 
-    /// Predict risk (simple rule-based logic)
+    /// Predict risk (prints to screen)
     PredictRisk {},
+
+    /// Predict risk and export as JSON
+    PredictRiskJson {
+        #[arg(short, long)]
+        output: String,
+    },
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -154,6 +160,19 @@ fn main() {
             }
             println!("🤖 Predicting risk (basic rules)...");
             risk::predict_risks(&records);
+        }
+
+        Commands::PredictRiskJson { output } => {
+            let path = "mock_data/merged_output.csv";
+            let file = File::open(path).expect("Failed to open source file");
+            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
+            let mut records = Vec::new();
+            for result in rdr.deserialize() {
+                let record: PatientRecord = result.expect("CSV deserialize failed");
+                records.push(record);
+            }
+            println!("🧠 Exporting prediction results as JSON...");
+            risk::export_risks_as_json(&records, output);
         }
     }
 }
