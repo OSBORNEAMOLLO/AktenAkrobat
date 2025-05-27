@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Anna Schmitt",
+    "age": 45,
+    "condition": "Diabetes Typ 2",
+    "severity": "hoch"
+  },
+  {
+    "id": 2,
+    "name": "Markus Weber",
+    "age": 61,
+    "condition": "Bluthochdruck",
+    "severity": "moderat"
+  },
+  {
+    "id": 3,
+    "name": "Lena Fischer",
+    "age": 29,
+    "condition": "Keine",
+    "severity": "niedrig"
+  }
+]

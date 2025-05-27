@@ -4,68 +4,28 @@ mod merge;
 mod export;
 mod risk;
 
-use std::fs::File;
+use std::{fs::File, path::Path};
 use clap::{Parser, Subcommand};
 use serde::{Deserialize, Serialize};
 use csv::ReaderBuilder;
-use serde_json;
+use thiserror::Error;
 
-/// A CLI tool for loading, validating, merging, exporting, predicting, and summarizing patient health data.
-#[derive(Parser)]
-#[command(name = "AktenAkrobat")]
-#[command(about = "A CLI tool for health data integration and analysis (CSV + JSON)", long_about = None)]
-struct Cli {
-    #[command(subcommand)]
-    command: Commands,
+/// Custom error type for AktenAkrobat
+#[derive(Debug, Error)]
+pub enum AktenError {
+    #[error("File I/O error: {0}")]
+    Io(#[from] std::io::Error),
+    #[error("CSV parsing error: {0}")]
+    Csv(#[from] csv::Error),
+    #[error("JSON serialization error: {0}")]
+    Json(#[from] serde_json::Error),
+    #[error("Invalid path: {0}")]
+    InvalidPath(String),
+    #[error("Unsupported file format (must be .csv or .json)")]
+    UnsupportedFormat,
 }
 
-#[derive(Subcommand)]
-enum Commands {
-    /// Load a CSV or JSON file of patient records
-    LoadFile {
-        #[arg(short, long)]
-        path: String,
-    },
-
-    /// Validate health data file
-    Validate {
-        #[arg(short, long)]
-        path: String,
-    },
-
-    /// Summarize health data
-    Summarize {
-        #[arg(short, long)]
-        path: String,
-    },
-
-    /// Merge multiple data files
-    MergeFiles {},
-
-    /// Export merged data as CSV or JSON
-    Export {
-        #[arg(short, long)]
-        format: String,
-        #[arg(short, long)]
-        output: String,
-    },
-
-    /// Export data formatted for AI use
-    ExportAi {
-        #[arg(short, long)]
-        output: String,
-    },
-
-    /// Predict risk (prints to screen)
-    PredictRisk {},
-
-    /// Predict risk and export as JSON
-    PredictRiskJson {
-        #[arg(short, long)]
-        output: String,
-    },
-}
-
+/// Patient health record structure
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PatientRecord {
     pub patient_id: u32,
@@ -78,101 +38,168 @@ pub struct PatientRecord {
     pub steps: u32,
 }
 
-fn main() {
+/// CLI interface definition
+#[derive(Parser)]
+#[command(name = "AktenAkrobat")]
+#[command(about = "Health Data CLI Toolkit (CSV/JSON)", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+
+    /// Enable medical-specific processing (DICOM/HL7 aware)
+    #[arg(long)]
+    medical_mode: bool,
+
+    /// Perform a dry run without changing files
+    #[arg(long)]
+    dry_run: bool,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Validate health data file
+    Validate {
+        #[arg(short, long)]
+        path: String,
+    },
+
+    /// Summarize health metrics
+    Summarize {
+        #[arg(short, long)]
+        path: String,
+    },
+
+    /// Merge multiple data files
+    MergeFiles {
+        #[arg(short, long)]
+        output: String,
+    },
+
+    /// Export data (CSV/JSON)
+    Export {
+        #[arg(short, long)]
+        format: String,
+        #[arg(short, long)]
+        output: String,
+    },
+
+    /// Export AI-ready JSON
+    ExportAi {
+        #[arg(short, long)]
+        output: String,
+    },
+
+    /// Predict health risks
+    PredictRisk {
+        #[arg(short, long)]
+        path: String,
+    },
+
+    /// Export predicted risks to a JSON file
+    ExportRiskJson {
+        #[arg(short, long)]
+        path: String,
+        #[arg(short, long)]
+        output: String,
+    },
+}
+
+/// Validates file path and extension
+fn validate_file_path(path: &str) -> Result<(), AktenError> {
+    if !Path::new(path).exists() {
+        return Err(AktenError::InvalidPath(path.to_string()));
+    }
+
+    if !(path.ends_with(".csv") || path.ends_with(".json")) {
+        return Err(AktenError::UnsupportedFormat);
+    }
+
+    Ok(())
+}
+
+/// Loads patient records from file
+fn load_records(path: &str) -> Result<Vec<PatientRecord>, AktenError> {
+    validate_file_path(path)?;
+
+    let file = File::open(path)?;
+    let mut records = Vec::new();
+
+    if path.ends_with(".json") {
+        records = serde_json::from_reader(file)?;
+    } else {
+        let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
+        for result in rdr.deserialize() {
+            records.push(result?);
+        }
+    }
+
+    Ok(records)
+}
+
+fn main() -> Result<(), AktenError> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Commands::LoadFile { path } => {
-            if path.to_lowercase().ends_with(".json") {
-                let file = File::open(path).expect("Failed to open JSON file");
-                let records: Vec<PatientRecord> =
-                    serde_json::from_reader(file).expect("Failed to parse JSON");
-                println!("✅ Loaded {} records from JSON", records.len());
-                for record in records {
-                    println!("{:?}", record);
-                }
-            } else {
-                let file = File::open(path).expect("Failed to open CSV file");
-                let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
-                let mut count = 0;
-                for result in rdr.deserialize() {
-                    let record: PatientRecord = result.expect("CSV deserialize failed");
-                    println!("{:?}", record);
-                    count += 1;
-                }
-                println!("✅ Loaded {} records from CSV", count);
-            }
-        }
-
         Commands::Validate { path } => {
-            println!("🔍 Validating data at `{}`...", path);
-            validate::run_validation(&path);
+            println!("🔍 Validating {} (medical mode: {})", path, cli.medical_mode);
+            if !cli.dry_run {
+                validate::run_validation(path, cli.medical_mode)?;
+            }
         }
 
         Commands::Summarize { path } => {
-            println!("📊 Summarizing data at `{}`...", path);
-            summarize::summarize_data(&path);
+            let records = load_records(path)?;
+            summarize::summarize_data(&records, cli.medical_mode)?;
         }
 
-        Commands::MergeFiles {} => {
-            println!("🔗 Merging mock_data/patients_sample.csv with another_sample.csv...");
-            merge::merge_files(
-                vec![
-                    "mock_data/patients_sample.csv",
-                    "mock_data/another_sample.csv",
-                ],
-                "mock_data/merged_output.csv",
-            );
+        Commands::MergeFiles { output } => {
+            println!("🔗 Merging files...");
+            let sources = vec![
+                "mock_data/patients_sample.csv",
+                "mock_data/another_sample.csv",
+            ];
+            if cli.dry_run {
+                println!("🧪 Dry-run: would merge files to '{}'.", output);
+            } else {
+                merge::merge_files(&sources, output, cli.medical_mode)?;
+            }
         }
 
         Commands::Export { format, output } => {
-            let path = "mock_data/merged_output.csv";
-            let file = File::open(path).expect("Failed to open source file");
-            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
-            let mut records = Vec::new();
-            for result in rdr.deserialize() {
-                let record: PatientRecord = result.expect("CSV deserialize failed");
-                records.push(record);
+            let records = load_records("mock_data/merged_output.csv")?;
+            if cli.dry_run {
+                println!("🧪 Dry-run: would export data to '{}'.", output);
+            } else {
+                export::export_data(&records, format, output, cli.medical_mode)?;
             }
-            export::export_data(&records, format, output);
         }
 
         Commands::ExportAi { output } => {
-            let path = "mock_data/merged_output.csv";
-            let file = File::open(path).expect("Failed to open source file");
-            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
-            let mut records = Vec::new();
-            for result in rdr.deserialize() {
-                let record: PatientRecord = result.expect("CSV deserialize failed");
-                records.push(record);
+            let records = load_records("mock_data/merged_output.csv")?;
+            if cli.dry_run {
+                println!("🧪 Dry-run: would export AI data to '{}'.", output);
+            } else {
+                export::export_ai_data(&records, output)?;
             }
-            export::export_ai_data(&records, output);
         }
 
-        Commands::PredictRisk {} => {
-            let path = "mock_data/merged_output.csv";
-            let file = File::open(path).expect("Failed to open source file");
-            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
-            let mut records = Vec::new();
-            for result in rdr.deserialize() {
-                let record: PatientRecord = result.expect("CSV deserialize failed");
-                records.push(record);
+        Commands::PredictRisk { path } => {
+            let records = load_records(path)?;
+            if cli.medical_mode {
+                println!("⚕️ Medical risk prediction mode");
             }
-            println!("🤖 Predicting risk (basic rules)...");
-            risk::predict_risks(&records);
+            risk::predict_risks(&records)?;
         }
 
-        Commands::PredictRiskJson { output } => {
-            let path = "mock_data/merged_output.csv";
-            let file = File::open(path).expect("Failed to open source file");
-            let mut rdr = ReaderBuilder::new().has_headers(true).from_reader(file);
-            let mut records = Vec::new();
-            for result in rdr.deserialize() {
-                let record: PatientRecord = result.expect("CSV deserialize failed");
-                records.push(record);
+        Commands::ExportRiskJson { path, output } => {
+            let records = load_records(path)?;
+            if cli.dry_run {
+                println!("🧪 Dry-run: would export predicted risk JSON to '{}'.", output);
+            } else {
+                risk::export_risks_as_json(&records, output)?;
             }
-            println!("🧠 Exporting prediction results as JSON...");
-            risk::export_risks_as_json(&records, output);
         }
     }
+
+    Ok(())
 }
