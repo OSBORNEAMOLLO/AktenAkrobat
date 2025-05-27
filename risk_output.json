@@ -1,0 +1,16 @@
+[
+  {
+    "patient_id": 104,
+    "date": "2025-04-22",
+    "risks": [
+      "High blood pressure",
+      "Fever",
+      "High blood sugar"
+    ],
+    "heart_rate": 100,
+    "bp_systolic": 150,
+    "bp_diastolic": 95,
+    "temperature": 38.2,
+    "blood_sugar": 7.1
+  }
+]
