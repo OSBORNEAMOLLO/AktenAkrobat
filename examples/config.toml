@@ -1,0 +1,7 @@
+[thresholds]
+critical_hr = { min = 50, max = 90 }
+hypertensive_crisis = { systolic = 150, diastolic = 100 }
+hypothermia = 35.0
+fever = 38.0
+hypoglycemia = 70.0
+hyperglycemia = 400.0

@@ -1,72 +1,98 @@
 [
   {
-    "patient_id": 101,
-    "date": "2025-04-20",
-    "heart_rate": 78,
-    "bp_systolic": 120,
-    "bp_diastolic": 80,
-    "temperature": 36.6,
-    "blood_sugar": 5.2,
-    "steps": 4300
+    "record": {
+      "patient_id": 1,
+      "date": "2024-12-01",
+      "heart_rate": 78,
+      "bp_systolic": 120,
+      "bp_diastolic": 80,
+      "temperature": 36.6,
+      "blood_sugar": 92.0,
+      "steps": 4500
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809324900+00:00",
+      "schema_version": "1.0"
+    }
   },
   {
-    "patient_id": 102,
-    "date": "2025-04-21",
-    "heart_rate": 90,
-    "bp_systolic": 138,
-    "bp_diastolic": 88,
-    "temperature": 37.1,
-    "blood_sugar": 6.0,
-    "steps": 5300
+    "record": {
+      "patient_id": 2,
+      "date": "2024-12-02",
+      "heart_rate": 102,
+      "bp_systolic": 145,
+      "bp_diastolic": 95,
+      "temperature": 39.0,
+      "blood_sugar": 410.0,
+      "steps": 2000
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809354100+00:00",
+      "schema_version": "1.0"
+    }
   },
   {
-    "patient_id": 103,
-    "date": "2025-04-21",
-    "heart_rate": 72,
-    "bp_systolic": 115,
-    "bp_diastolic": 75,
-    "temperature": 36.4,
-    "blood_sugar": 5.4,
-    "steps": 6000
+    "record": {
+      "patient_id": 3,
+      "date": "2024-12-03",
+      "heart_rate": 55,
+      "bp_systolic": 130,
+      "bp_diastolic": 85,
+      "temperature": 37.0,
+      "blood_sugar": 85.0,
+      "steps": 7000
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809355600+00:00",
+      "schema_version": "1.0"
+    }
   },
   {
-    "patient_id": 104,
-    "date": "2025-04-22",
-    "heart_rate": 100,
-    "bp_systolic": 150,
-    "bp_diastolic": 95,
-    "temperature": 38.2,
-    "blood_sugar": 7.1,
-    "steps": 4000
+    "record": {
+      "patient_id": 1,
+      "date": "2024-12-01",
+      "heart_rate": 78,
+      "bp_systolic": 120,
+      "bp_diastolic": 80,
+      "temperature": 36.6,
+      "blood_sugar": 92.0,
+      "steps": 4500
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809357200+00:00",
+      "schema_version": "1.0"
+    }
   },
   {
-    "patient_id": 105,
-    "date": "2025-04-22",
-    "heart_rate": 65,
-    "bp_systolic": 110,
-    "bp_diastolic": 70,
-    "temperature": 36.0,
-    "blood_sugar": 4.9,
-    "steps": 7000
+    "record": {
+      "patient_id": 2,
+      "date": "2024-12-02",
+      "heart_rate": 102,
+      "bp_systolic": 145,
+      "bp_diastolic": 95,
+      "temperature": 39.0,
+      "blood_sugar": 410.0,
+      "steps": 2000
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809358500+00:00",
+      "schema_version": "1.0"
+    }
   },
   {
-    "patient_id": 106,
-    "date": "2025-04-23",
-    "heart_rate": 88,
-    "bp_systolic": 125,
-    "bp_diastolic": 85,
-    "temperature": 37.2,
-    "blood_sugar": 5.8,
-    "steps": 3000
-  },
-  {
-    "patient_id": 107,
-    "date": "2025-04-24",
-    "heart_rate": 95,
-    "bp_systolic": 130,
-    "bp_diastolic": 90,
-    "temperature": 37.0,
-    "blood_sugar": 6.5,
-    "steps": 7000
+    "record": {
+      "patient_id": 3,
+      "date": "2024-12-03",
+      "heart_rate": 55,
+      "bp_systolic": 130,
+      "bp_diastolic": 85,
+      "temperature": 37.0,
+      "blood_sugar": 85.0,
+      "steps": 7000
+    },
+    "metadata": {
+      "export_timestamp": "2025-05-30T06:50:35.809359800+00:00",
+      "schema_version": "1.0"
+    }
   }
 ]

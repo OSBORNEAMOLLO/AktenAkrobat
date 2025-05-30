@@ -1,0 +1,10 @@
+name,command
+Validate (CSV),cargo run -- --medical-mode --config examples/config.toml validate --path mock_data/patients_sample.csv
+Validate (JSON),cargo run -- --medical-mode --config examples/config.toml validate --path mock_data/german_patients.json
+Summarize (CSV),cargo run -- --medical-mode summarize --path mock_data/patients_sample.csv
+Merge CSV files,cargo run -- --medical-mode mergefiles --output mock_data/merged_output.csv
+Export (CSV),cargo run -- --medical-mode export --format csv --output export.csv
+Export (JSON),cargo run -- --medical-mode export --format json --output export.json
+Export AI Data,cargo run -- --medical-mode exportai --output ai_data.json
+Predict Risk (CSV),cargo run -- --medical-mode predictrisk --path mock_data/patients_sample.csv
+Export Risk JSON,cargo run -- --medical-mode exportriskjson --path mock_data/patients_sample.csv --output risk_output.json

@@ -29,7 +29,6 @@ pub fn merge_files(inputs: &Vec<&str>, output: &str, medical_mode: bool) -> Resu
         }
     }
 
-    // Write combined records to output CSV
     let file = OpenOptions::new()
         .create(true)
         .write(true)
@@ -46,7 +45,7 @@ pub fn merge_files(inputs: &Vec<&str>, output: &str, medical_mode: bool) -> Resu
     if medical_mode {
         println!("📋 Medical mode enabled – merged {} records to '{}'.", all_records.len(), output);
     } else {
-        println!("📦 Merged {} records to '{}'.", all_records.len(), output);
+        println!("💼 Merged {} records to '{}'.", all_records.len(), output);
     }
 
     Ok(())
